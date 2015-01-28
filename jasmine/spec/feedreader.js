@@ -31,30 +31,69 @@ $(function() {
          * in the allFeeds object and ensures it has a URL defined
          * and that the URL is not empty.
          */
+        it('are with non-empty feed urls', function() {
+            // Iterate through all feed entries
+            allFeeds.forEach(function(feed) {
+                // Extract feed url from current entry
+                var currentUrl = feed.url;
+                // Feed url should be defined
+                expect(currentUrl).toBeDefined();
+                // Feed url should be non-empty
+                expect(currentUrl.length).not.toBe(0);
+            });
+        });
 
 
         /* TODO: Write a test that loops through each feed
          * in the allFeeds object and ensures it has a name defined
          * and that the name is not empty.
          */
+        it('are with non-empty feed names', function() {
+            // Iterate through all feed entries
+            allFeeds.forEach(function(feed) {
+                // Extract feed name from current entry
+                var currentName = feed.name;
+                // Feed name should be defined
+                expect(currentName).toBeDefined();
+                // Feed name should be non-empty
+                expect(currentName.length).not.toBe(0);
+            });
+        });
     });
 
 
     /* TODO: Write a new test suite named "The menu" */
+    describe('The menu', function() {
 
         /* TODO: Write a test that ensures the menu element is
          * hidden by default. You'll have to analyze the HTML and
          * the CSS to determine how we're performing the
          * hiding/showing of the menu element.
          */
+        it('is hidden by default', function() {
+            // Initially, the menu should be hidden with the class 'menu-hidden'
+            expect($('body').hasClass('menu-hidden')).toBe(true);
+        });
 
          /* TODO: Write a test that ensures the menu changes
           * visibility when the menu icon is clicked. This test
           * should have two expectations: does the menu display when
           * clicked and does it hide when clicked again.
           */
+        it('can change visibility in response to icon click', function() {
+            // Mimic the click of the menu icon and test the change of visibility
+            $('.menu-icon-link').trigger('click');
+            // The menu should be visible now
+            expect($('body').hasClass('menu-hidden')).toBe(false);
+            // The menu should return to the hidden state after another click of the menu icon
+            $('.menu-icon-link').trigger('click');
+            expect($('body').hasClass('menu-hidden')).toBe(true);
+        });
+
+    });
 
     /* TODO: Write a new test suite named "Initial Entries" */
+    describe('Initial Entries', function() {
 
         /* TODO: Write a test that ensures when the loadFeed
          * function is called and completes its work, there is at least
@@ -62,11 +101,51 @@ $(function() {
          * Remember, loadFeed() is asynchronous so this test wil require
          * the use of Jasmine's beforeEach and asynchronous done() function.
          */
+        
+        beforeEach(function(done) {
+            // The asynchronous feed should be loaded before checking the Specs
+            loadFeed(0, done);
+        });
 
-    /* TODO: Write a new test suite named "New Feed Selection"
+        it('are successfully loaded', function(done) {
+            // Select .entry elements within the .feed container
+            var feedEntries = $('.feed .entry');
+            // At least one .entry elements should be loaded
+            expect(feedEntries.length).not.toBe(0);
+            done();
+        });
+    });
+
+    /* TODO: Write a new test suite named "New Feed Selection" */
+    describe('New Feed Selection', function() {
 
         /* TODO: Write a test that ensures when a new feed is loaded
          * by the loadFeed function that the content actually changes.
          * Remember, loadFeed() is asynchronous.
          */
+        // Represent the name of the first two feed source
+        var feed0, feed1;
+        
+        beforeEach(function(done) {
+            // Extract the name of the first feed source
+            feed0 = $('h1')[0].innerText;
+            // Load another feed source with loadFeed function
+            // The asynchronous feed should be loaded before checking the Specs
+            loadFeed(1, done);
+        });
+
+        it('is able to work properly', function(done) {
+            // Extract the name of the second feed source
+            feed1 = $('h1')[0].innerText;
+            // If loadFeed function is errorless, feed0 and feed1 should be different
+            expect(feed0).not.toEqual(feed1);
+            done();
+        });
+
+        afterEach(function(done) {
+            // After the test of loadFeed function, reset feed source to the default
+            loadFeed(0, done);
+        });
+    });
+
 }());
